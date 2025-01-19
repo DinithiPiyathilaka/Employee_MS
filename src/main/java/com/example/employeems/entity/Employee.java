@@ -18,4 +18,6 @@ public class Employee {
     private String empName;
     private String empAddress;
     private String empMNumber;
+    private String empDepartment;
+    private String profilePicturePath;
 }
