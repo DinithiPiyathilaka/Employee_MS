@@ -10,6 +10,36 @@
 <script src="js/employee.js"></script>
 <body>
 <div class="container" style="margin-top: 100px;">
+
+    <!-- Search Employee Section -->
+    <div class="container mt-4">
+        <h3>Search Employee</h3>
+        <div class="mb-3">
+            <label for="searchEmpID" class="form-label">Employee ID</label>
+            <input type="number" class="form-control" id="searchEmpID" placeholder="Enter Employee ID">
+        </div>
+        <button class="btn btn-primary" onclick="searchEmployee()">Search</button>
+    </div>
+
+    <!-- Search Result Table -->
+    <div class="container mt-4">
+        <h4>Search Result</h4>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Mobile Number</th>
+            </tr>
+            </thead>
+            <tbody id="searchResultTable">
+            <!-- Search results will be appended here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Employee Details Form -->
     <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Employee ID</label>
         <input type="text" disabled class="form-control" id="exampleFormControlInput1" placeholder="Employee ID">
@@ -30,12 +60,14 @@
         <input type="number" class="form-control" id="exampleFormControlInput4" placeholder="Employee Number">
     </div>
 
+    <!-- Buttons for Save, Update, Delete -->
     <div class="mb-3">
         <button type="button" class="btn btn-primary" onclick="saveEmployee()">Save</button>
         <button type="button" class="btn btn-secondary" onclick="updateEmployee()">Update</button>
         <button type="button" class="btn btn-success" onclick="deleteEmployee()">Delete</button>
     </div>
 
+    <!-- Employee Table -->
     <div style="margin-top: 50px;">
         <table class="table">
             <thead>
@@ -54,6 +86,44 @@
 
 </div>
 
+<script>
+    // Ensure searchEmployee is defined globally
+    function searchEmployee() {
+        let empID = $('#searchEmpID').val();
 
+        if (!empID) {
+            alert("Please enter a valid Employee ID");
+            return;
+        }
+
+        $.ajax({
+            method: "GET",
+            url: "http://localhost:8080/api/v1/employee/searchEmployee/" + empID,
+            async: true,
+            success: function (data) {
+                if (data.code === "00") {
+                    $('#searchResultTable').empty(); // Clear existing results
+
+                    let emp = data.content;
+                    let row = `<tr>
+                    <td>${emp.empID}</td>
+                    <td>${emp.empName}</td>
+                    <td>${emp.empAddress}</td>
+                    <td>${emp.empMNumber}</td>
+                </tr>`;
+                    $('#searchResultTable').append(row);
+                } else {
+                    alert(data.message);
+                    $('#searchResultTable').empty(); // Clear previous results
+                }
+            },
+            error: function (xhr, exception) {
+                alert("Error occurred while searching for employee.");
+            }
+        });
+    }
+
+
+</script>
 </body>
 </html>
